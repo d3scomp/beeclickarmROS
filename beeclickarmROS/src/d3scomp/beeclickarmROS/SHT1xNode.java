@@ -5,7 +5,8 @@ import org.ros.node.AbstractNodeMain;
 import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Publisher;
 
-import std_msgs.Float32;
+import sensor_msgs.RelativeHumidity;
+import sensor_msgs.Temperature;
 import d3scomp.beeclickarmj.Comm;
 import d3scomp.beeclickarmj.HumidityReadingListener;
 import d3scomp.beeclickarmj.TemperatureReadingListener;
@@ -25,16 +26,16 @@ public class SHT1xNode extends AbstractNodeMain {
 	
 	@Override
 	public void onStart(ConnectedNode connectedNode) {		
-		Publisher<std_msgs.Float32> tempPublisher = connectedNode.newPublisher(getDefaultNodeName() + "/temperature", std_msgs.Float32._TYPE);
-		Publisher<std_msgs.Float32> humiPublisher = connectedNode.newPublisher(getDefaultNodeName() + "/humidity", std_msgs.Float32._TYPE);
+		Publisher<Temperature> tempPublisher = connectedNode.newPublisher(getDefaultNodeName() + "/temperature", Temperature._TYPE);
+		Publisher<RelativeHumidity> humiPublisher = connectedNode.newPublisher(getDefaultNodeName() + "/humidity", RelativeHumidity._TYPE);
 		
 		
 		// Publish new temperature reading when received
 		boardComm.setTemperatureReadingListener(new TemperatureReadingListener() {
 			@Override
 			public void readTemperature(float temperature) {
-				Float32 temp = tempPublisher.newMessage();
-				temp.setData(temperature);
+				Temperature temp = tempPublisher.newMessage();
+				temp.setTemperature(temperature);
 				tempPublisher.publish(temp);
 			}
 		});
@@ -43,8 +44,8 @@ public class SHT1xNode extends AbstractNodeMain {
 		boardComm.setHumidityReadingListener(new HumidityReadingListener() {
 			@Override
 			public void readHumidity(float humidity) {
-				Float32 msg = humiPublisher.newMessage();
-				msg.setData(humidity);
+				RelativeHumidity msg = humiPublisher.newMessage();
+				msg.setRelativeHumidity(humidity);
 				humiPublisher.publish(msg);
 			}
 		});

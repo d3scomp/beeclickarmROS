@@ -2,12 +2,14 @@ package d3scomp.beeclickarmROS;
 
 import java.util.Date;
 
+import org.ros.message.Time;
 import org.ros.namespace.GraphName;
 import org.ros.node.AbstractNodeMain;
 import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Publisher;
 
-import std_msgs.Float64;
+import sensor_msgs.NavSatFix;
+import sensor_msgs.TimeReference;
 import d3scomp.beeclickarmj.Comm;
 import d3scomp.beeclickarmj.GPSReadingListener;
 
@@ -26,21 +28,25 @@ public class GPSNode extends AbstractNodeMain {
 	
 	@Override
 	public void onStart(ConnectedNode connectedNode) {		
-		Publisher<std_msgs.Float64> latPublisher = connectedNode.newPublisher(getDefaultNodeName() + "/lat", std_msgs.Float64._TYPE);
-		Publisher<std_msgs.Float64> lonPublisher = connectedNode.newPublisher(getDefaultNodeName() + "/lon", std_msgs.Float64._TYPE);
+		Publisher<NavSatFix> positionPublisher = connectedNode.newPublisher(getDefaultNodeName() + "/position", NavSatFix._TYPE);
+		Publisher<TimeReference> timePublisher = connectedNode.newPublisher(getDefaultNodeName() + "/time", TimeReference._TYPE);
 		
 		// Publish new humidity reading when received
 		boardComm.setGPSReadingListener(new GPSReadingListener() {
 			@Override
 			public void readGPS(double longtitude, double lattitude, Date time) {
-				Float64 latMsg = latPublisher.newMessage();
-				Float64 lonMsg = lonPublisher.newMessage();
+				NavSatFix positionfix = positionPublisher.newMessage();
 				
-				lonMsg.setData(lattitude);
-				latMsg.setData(longtitude);
+				TimeReference timeFix = timePublisher.newMessage();
 				
-				latPublisher.publish(latMsg);
-				lonPublisher.publish(lonMsg);
+				positionfix.setLatitude(lattitude);
+				positionfix.setLongitude(longtitude);
+			
+				timeFix.setSource("GPS");
+				timeFix.setTimeRef(Time.fromMillis(time.getTime() * 1000));
+				
+				positionPublisher.publish(positionfix);
+				timePublisher.publish(timeFix);
 			}
 		});
 	}

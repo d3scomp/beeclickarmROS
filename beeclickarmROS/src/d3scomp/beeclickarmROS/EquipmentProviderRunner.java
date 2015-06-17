@@ -15,7 +15,7 @@ import d3scomp.beeclickarmj.JSSCComm;
 public class EquipmentProviderRunner {
 	public static void main(String[] args) throws URISyntaxException, CommException, IOException {
 		// Setup board connection
-		Comm comm = new JSSCComm("COM7");
+		Comm comm = new JSSCComm("COM6");
 
 		comm.start();
 
