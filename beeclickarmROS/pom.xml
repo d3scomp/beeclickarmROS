@@ -28,11 +28,6 @@
 			<artifactId>sensor_msgs</artifactId>
 			<version>1.11.7</version>
 		</dependency>
-		<dependency>
-			<groupId>org.ros.rosjava_messages</groupId>
-			<artifactId>nav_msgs</artifactId>
-			<version>1.11.7</version>
-		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
