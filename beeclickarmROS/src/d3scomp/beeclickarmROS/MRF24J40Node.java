@@ -44,8 +44,10 @@ public class MRF24J40Node extends AbstractNodeMain {
 			public void receivePacket(RXPacket packet) {
 				IEEE802154ReceivedPacket packetMsg = packetPublisher.newMessage();
 				packetMsg.setRssi(packet.getRSSI());
-				// TODO: Represent sender as something smarter
-				packetMsg.setSender(String.format("%x", packet.getSrcSAddr()));
+				packetMsg.setFcs(packet.getFCS());
+				packetMsg.setLqi(packet.getLQI());
+				packetMsg.setSrcPanId(packet.getSrcPanId());
+				packetMsg.setSrcSAddr(packet.getSrcSAddr());
 				ChannelBuffer packetData = ChannelBuffers.wrappedBuffer(ByteOrder.LITTLE_ENDIAN, packet.getData());
 				packetMsg.setData(packetData);
 				packetPublisher.publish(packetMsg);
