@@ -1,27 +1,25 @@
 package d3scomp.beeclickarmROS;
 
 import java.nio.ByteOrder;
-import java.util.List;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.ros.exception.ServiceException;
-import org.ros.internal.message.RawMessage;
 import org.ros.namespace.GraphName;
 import org.ros.node.AbstractNodeMain;
 import org.ros.node.ConnectedNode;
 import org.ros.node.service.ServiceResponseBuilder;
-import org.ros.node.service.ServiceServer;
 import org.ros.node.topic.Publisher;
 
+import beeclickarm_messages.IEEE802154BroadcastPacket;
+import beeclickarm_messages.IEEE802154BroadcastPacketRequest;
+import beeclickarm_messages.IEEE802154BroadcastPacketResponse;
 import beeclickarm_messages.IEEE802154ReceivedPacket;
-import std_msgs.ByteMultiArray;
-import std_msgs.Empty;
-import std_msgs.MultiArrayDimension;
-import std_msgs.MultiArrayLayout;
 import d3scomp.beeclickarmj.Comm;
+import d3scomp.beeclickarmj.CommException;
 import d3scomp.beeclickarmj.RXPacket;
 import d3scomp.beeclickarmj.ReceivePacketListener;
+import d3scomp.beeclickarmj.TXPacket;
 
 public class MRF24J40Node extends AbstractNodeMain {
 	private final Comm boardComm;
@@ -38,8 +36,8 @@ public class MRF24J40Node extends AbstractNodeMain {
 	@Override
 	public void onStart(ConnectedNode connectedNode) {
 		// Received packet publisher
-		Publisher<IEEE802154ReceivedPacket> packetPublisher = connectedNode.newPublisher(getDefaultNodeName() + "/received",
-				IEEE802154ReceivedPacket._TYPE);
+		Publisher<IEEE802154ReceivedPacket> packetPublisher = connectedNode.newPublisher(getDefaultNodeName()
+				+ "/received_packets", IEEE802154ReceivedPacket._TYPE);
 
 		boardComm.setReceivePacketListener(new ReceivePacketListener() {
 			@Override
@@ -53,14 +51,22 @@ public class MRF24J40Node extends AbstractNodeMain {
 				packetPublisher.publish(packetMsg);
 			}
 		});
-		
-/*		// Packet sending server
-		ServiceServer<Empty, Empty> server = connectedNode.newServiceServer(getDefaultNodeName(), "/send", new ServiceResponseBuilder<Empty, Empty>() {
-			@Override
-			public void build(Empty arg0, Empty arg1) throws ServiceException {
-				// TODO Auto-generated method stub
-			}
-		});
-	*/	
+
+		// Packet sending server
+		connectedNode.newServiceServer(getDefaultNodeName() + "/broadcast_packet", IEEE802154BroadcastPacket._TYPE,
+				new ServiceResponseBuilder<IEEE802154BroadcastPacketRequest, IEEE802154BroadcastPacketResponse>() {
+					@Override
+					public void build(IEEE802154BroadcastPacketRequest packetData, IEEE802154BroadcastPacketResponse response)
+							throws ServiceException {
+						TXPacket txPacket = new TXPacket(packetData.getData().array());
+						try {
+							boardComm.broadcastPacket(txPacket);
+							response.setSuccess(true);
+						} catch (CommException e) {
+							e.printStackTrace();
+							response.setSuccess(false);
+						}
+					}
+				});
 	}
 }
