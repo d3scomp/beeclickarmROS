@@ -1,0 +1,9 @@
+<package>
+	<name>beeclickarmROS</name>
+	<version>0.0.1</version>
+	<description>ROS message definition for beeclickarm services</description>
+	<maintainer email="matena@d3s.mff.cuni.cz">Vladimir Matena</maintainer>	
+	<license>BSD</license>	
+
+	<build_depend>message_generation</build_depend>
+</package>

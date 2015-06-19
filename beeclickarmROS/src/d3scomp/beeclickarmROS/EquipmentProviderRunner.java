@@ -34,6 +34,10 @@ public class EquipmentProviderRunner {
 		GPSNode gpsNode = new GPSNode(comm);
 		nodeMainExecutor.execute(gpsNode, nodeConfig);
 		
+		// Run MRF24J40 node
+		MRF24J40Node mrf24j40Node = new MRF24J40Node(comm);
+		nodeMainExecutor.execute(mrf24j40Node, nodeConfig);
+		
 		
 		System.out.println("Press enter to exit");
 		System.in.read();
