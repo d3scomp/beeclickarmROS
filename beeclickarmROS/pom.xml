@@ -15,6 +15,19 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>d3scomp.beeclickarmROS.EquipmentProviderRunner</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -32,6 +45,11 @@
 			<groupId>org.ros.rosjava_messages</groupId>
 			<artifactId>std_srvs</artifactId>
 			<version>1.11.1</version>
+		</dependency>
+		<dependency>
+			<groupId>beeclickarmj</groupId>
+			<artifactId>beeclickarmj</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<repositories>
