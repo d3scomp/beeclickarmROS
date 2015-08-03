@@ -1,6 +1,7 @@
 package d3scomp.beeclickarmROS;
 
 import java.nio.ByteOrder;
+import java.util.Arrays;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
@@ -50,6 +51,7 @@ public class MRF24J40Node extends AbstractNodeMain {
 				packetMsg.setSrcSAddr(packet.getSrcSAddr());
 				ChannelBuffer packetData = ChannelBuffers.wrappedBuffer(ByteOrder.LITTLE_ENDIAN, packet.getData());
 				packetMsg.setData(packetData);
+				System.out.println("PUBLISHING PACKET");
 				packetPublisher.publish(packetMsg);
 			}
 		});
@@ -58,9 +60,16 @@ public class MRF24J40Node extends AbstractNodeMain {
 		connectedNode.newServiceServer(getDefaultNodeName() + "/broadcast_packet", IEEE802154BroadcastPacket._TYPE,
 				new ServiceResponseBuilder<IEEE802154BroadcastPacketRequest, IEEE802154BroadcastPacketResponse>() {
 					@Override
-					public void build(IEEE802154BroadcastPacketRequest packetData, IEEE802154BroadcastPacketResponse response)
-							throws ServiceException {
-						TXPacket txPacket = new TXPacket(packetData.getData().array());
+					public void build(IEEE802154BroadcastPacketRequest packetData,
+							IEEE802154BroadcastPacketResponse response) throws ServiceException {
+						// Get data from ChannelBuffer messageBuffer to byte[] messageData
+						ChannelBuffer messageBuffer = packetData.getData();
+						byte[] backingArray = messageBuffer.array();
+						byte[] messageData = Arrays.copyOfRange(backingArray, messageBuffer.arrayOffset(),
+								backingArray.length);
+
+						// Broadcast packet data
+						TXPacket txPacket = new TXPacket(messageData);
 						try {
 							boardComm.broadcastPacket(txPacket);
 							response.setSuccess(true);
