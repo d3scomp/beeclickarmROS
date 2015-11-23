@@ -11,13 +11,12 @@ add_message_files(
   DIRECTORY msg
   FILES
   IEEE802154Packet.msg
-  IEEE802154ReceivedPacket.msg)
+  IEEE802154ReceivedPacket.msg)IRLED.srv
 
-#add_service_files(
-#  FILES
-#  GetMap.srv
-#  GetPlan.srv
-#  SetMap.srv)
+add_service_files(
+  FILES
+  IEEE802154BroadcastPacket.srv
+  IRLED.srv)
 
 #add_action_files(
 #  FILES
