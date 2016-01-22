@@ -4,7 +4,7 @@
 	<artifactId>cz.cuni.mff.d3s.ros.beeclickarmROS</artifactId>
 	<groupId>cz.cuni.mff.d3s.ros</groupId>
 	<version>0.1.0</version>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
