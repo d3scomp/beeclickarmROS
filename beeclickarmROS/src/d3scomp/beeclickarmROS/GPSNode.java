@@ -43,7 +43,7 @@ public class GPSNode extends AbstractNodeMain {
 				positionfix.setLongitude(longtitude);
 			
 				timeFix.setSource("GPS");
-				timeFix.setTimeRef(Time.fromMillis(time.getTime()));
+				timeFix.setTimeRef(new Time(time.getTime()));
 				
 				positionPublisher.publish(positionfix);
 				timePublisher.publish(timeFix);
